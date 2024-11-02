@@ -32,18 +32,22 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml push
+          echo "Starting to build Docker images..."
+          docker-compose -f docker-compose.yml build || exit 1
+          echo "Starting to push Docker images..."
+          docker-compose -f docker-compose.yml push || exit 1
 
       - name: Run Docker Compose
-        run: docker-compose up -d
+        run: |
+          echo "Starting Docker Compose up..."
+          docker-compose up -d || exit 1
 
       - name: Run Tests
         run: |
-          # Replace with actual test commands
-          echo "Running tests..."
-          docker-compose exec user-service ./run_tests.sh || true
-          docker-compose exec order-service ./run_tests.sh || true
+          echo "Running tests for User Service..."
+          docker-compose exec user-service ./run_tests.sh || exit 1
+          echo "Running tests for Order Service..."
+          docker-compose exec order-service ./run_tests.sh || exit 1
 
       - name: Tear Down
         if: always()
