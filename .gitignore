@@ -1,0 +1,16 @@
+# Binaries
+**/target/
+**/build/
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# Docker
+**/docker-compose.yml
