@@ -12,6 +12,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true  # Forces all actions to use Node.js 20
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -21,8 +24,10 @@ jobs:
 
       - name: Install Docker Compose
         run: |
+          echo "Installing Docker Compose..."
           sudo apt-get update
           sudo apt-get install -y docker-compose
+          docker-compose version
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -32,14 +37,14 @@ jobs:
 
       - name: Build and Push Docker Images
         run: |
-          echo "Starting to build Docker images..."
+          echo "Building Docker images..."
           docker-compose -f docker-compose.yml build || exit 1
-          echo "Starting to push Docker images..."
+          echo "Pushing Docker images..."
           docker-compose -f docker-compose.yml push || exit 1
 
       - name: Run Docker Compose
         run: |
-          echo "Starting Docker Compose up..."
+          echo "Starting Docker Compose..."
           docker-compose up -d || exit 1
 
       - name: Run Tests
@@ -51,4 +56,6 @@ jobs:
 
       - name: Tear Down
         if: always()
-        run: docker-compose down
+        run: |
+          echo "Stopping Docker Compose..."
+          docker-compose down
